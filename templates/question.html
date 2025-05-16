@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="question-container">
+    <h1 class="text-center mb-5">Risk Assessment Questionnaire</h1>
+    
+    <div class="progress-wrapper mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-muted fs-6">Progress</span>
+            <span class="badge bg-primary">Question {{ progress + 1 }} of {{ total_questions }}</span>
+        </div>
+        <div class="progress">
+            {% set progress_percentage = '{:.0f}'.format((progress / total_questions) * 100) %}
+            <div class="progress-bar" role="progressbar" 
+                 data-progress="{{ progress_percentage }}"
+                 aria-valuenow="{{ progress_percentage }}"
+                 aria-valuemin="0" aria-valuemax="100">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="question-header mb-4">
+                <span class="badge bg-light text-primary mb-2">Question {{ question.id }}</span>
+                <h2 class="card-title h4 mb-3">{{ question.text }}</h2>
+            </div>
+
+            <form method="POST">
+                {{ form.csrf_token }}
+                <div class="options">
+                    {% for option in form.answer %}
+                    <label class="option">
+                        {{ option }}
+                        <span>{{ option.label.text }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                
+                <div class="navigation-buttons">
+                    {% if progress > 0 %}
+                    <a href="{{ url_for('index', action='prev') }}" class="btn btn-outline-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                        </svg>
+                        Previous
+                    </a>
+                    {% else %}
+                    <div></div>
+                    {% endif %}
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .progress-wrapper {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .options {
+        display: grid;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .question-header {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
+    }
+    
+    .badge {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+    }
+    
+    .option {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem;
+        border: 2px solid var(--border-color);
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: linear-gradient(to right, white 50%, #FFF0EB 50%);
+        background-size: 200% 100%;
+        background-position: left bottom;
+        position: relative;
+    }
+    
+    .option:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px) scale(1.01);
+        background-position: right bottom;
+    }
+
+    .option:hover::before {
+        content: "😺";
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.7;
+        font-size: 1.2rem;
+    }
+    
+    .option input[type="radio"] {
+        margin-right: 12px;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--border-color);
+        transition: all 0.2s ease;
+    }
+    
+    .option span {
+        margin-left: 8px;
+        font-size: 1rem;
+        color: var(--text-color);
+        transition: all 0.3s ease;
+    }
+
+    /* Selected state */
+    .option input[type="radio"]:checked + span {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .option input[type="radio"]:checked {
+        border-color: var(--primary-color);
+        background-color: var(--primary-color);
+    }
+
+    .option:has(input[type="radio"]:checked) {
+        background: #FFF0EB;
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1);
+    }
+
+    .option:has(input[type="radio"]:checked)::after {
+        content: "🐱";
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+    }
+
+    .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px) scale(1.05);
+    }
+
+    .btn::after {
+        content: "🐾";
+        position: absolute;
+        right: -20px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover::after {
+        right: 10px;
+        opacity: 1;
+    }
+
+    :root {
+        --primary-color: #FF6B6B;
+        --primary-hover: #FF5252;
+        --border-color: #FFE0E0;
+        --text-color: #4A4A4A;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressBar = document.querySelector('.progress-bar');
+        const progress = progressBar.getAttribute('data-progress');
+        progressBar.style.width = progress + '%';
+    });
+</script>
+{% endblock %} 

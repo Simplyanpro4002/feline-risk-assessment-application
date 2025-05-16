@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Your Pawfolio Profile Results</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <h2 class="card-title">{{ risk_profile.name }}</h2>
+                <h3 class="text-muted">{{ risk_profile.cat_type }}</h3>
+                <div class="scores mt-3">
+                    <p><strong>Risk Group:</strong> {{ risk_profile.group }}/7</p>
+                    <p><strong>Raw Score:</strong> {{ raw_score }}/55</p>
+                    <p><strong>Standard Score:</strong> {{ "%.1f"|format(standard_score) }}/100</p>
+                </div>
+            </div>
+
+            <div class="profile-description">
+                <h4>Core Traits:</h4>
+                <ul class="list-group list-group-flush mb-4">
+                    {% for trait in risk_profile.core_traits %}
+                    <li class="list-group-item">{{ trait }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h4>Personality:</h4>
+                <p class="lead">{{ risk_profile.personality }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title mb-4">Your Answers</h3>
+            <div class="answers-list">
+                {% for question in questions %}
+                <div class="answer-item mb-3">
+                    <p><strong>Question {{ question.id }}:</strong> {{ question.text }}</p>
+                    <p><strong>Your answer:</strong> 
+                        {% for option in question.options %}
+                            {% if option[0] == answers[question.id|string] %}
+                                {{ option[1] }}
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Take the Assessment Again</a>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scores {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
+.list-group-item {
+    border: none;
+    padding: 0.5rem 1rem;
+    position: relative;
+}
+
+.list-group-item:before {
+    content: "🐾";
+    margin-right: 10px;
+}
+
+.lead {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #495057;
+}
+
+.answer-item {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+}
+
+.answer-item:last-child {
+    border-bottom: none;
+}
+</style>
+{% endblock %} 
