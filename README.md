@@ -16,7 +16,7 @@ python init_db.py
 
 3. Run the application:
 ```bash
-
+python app.py
 ```
 
 ## Sample Account
